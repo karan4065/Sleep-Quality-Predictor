@@ -20,7 +20,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:3001/api/auth/login', { ...formData, role });
+      const res = await axios.post(`${import.meta.env.VITE_APP}/api/auth/login`, { ...formData, role });
       
       if (res.data.role === 'admin') {
         localStorage.setItem('adminToken', res.data.token);
@@ -42,7 +42,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('http://localhost:3001/api/auth/forgot-password', { email: forgotEmail });
+      await axios.post(`${import.meta.env.VITE_APP}/api/auth/forgot-password`, { email: forgotEmail });
       toast.success('OTP sent to your email');
       setView('reset');
     } catch (err) {
@@ -56,7 +56,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('http://localhost:3001/api/auth/reset-password', { email: forgotEmail, otp, newPassword });
+      await axios.post(`${import.meta.env.VITE_APP}/api/auth/reset-password`, { email: forgotEmail, otp, newPassword });
       toast.success('Password reset successfully! Please login.');
       setView('login');
       setForgotEmail('');

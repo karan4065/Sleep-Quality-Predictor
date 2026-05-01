@@ -21,7 +21,7 @@ const Suggestion = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await axios.post('http://localhost:3001/api/suggestions', formData);
+      await axios.post(`${import.meta.env.VITE_APP}/api/suggestions`, formData);
       toast.success('Thank you for your suggestion!');
       setFormData({ ...formData, message: '' }); 
     } catch (err) {

@@ -14,7 +14,7 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:3001/api/auth/register', formData);
+      const res = await axios.post(`${import.meta.env.VITE_APP}/api/auth/register`, formData);
       login(res.data.token, res.data.user);
       toast.success('Account created successfully!');
       navigate('/');

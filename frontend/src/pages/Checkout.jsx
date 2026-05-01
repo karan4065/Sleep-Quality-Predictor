@@ -24,7 +24,7 @@ const Checkout = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`http://localhost:3001/api/products/${productId}`);
+        const res = await axios.get(`${import.meta.env.VITE_APP}/api/products/${productId}`);
         setProduct(res.data);
       } catch (err) {
         toast.error('Failed to load product details');
@@ -64,7 +64,7 @@ const Checkout = () => {
     };
 
     try {
-      await axios.post('http://localhost:3001/api/orders', payload);
+      await axios.post(`${import.meta.env.VITE_APP}/api/orders`, payload);
       toast.success('Order Placed Successfully! 🎉');
       navigate('/orders'); // Or back to shop / success page
     } catch (err) {
@@ -89,7 +89,7 @@ const Checkout = () => {
     
     try {
       // 1. Create Razorpay order
-      const orderRes = await axios.post('http://localhost:3001/api/orders/create-razorpay-order', {
+      const orderRes = await axios.post(`${import.meta.env.VITE_APP}/api/orders/create-razorpay-order`, {
         amount: totalPrice,
         currency: "INR",
         receipt: `rcpt_${Date.now()}`
@@ -122,7 +122,7 @@ const Checkout = () => {
               }
             };
             
-            await axios.post('http://localhost:3001/api/orders/validate-razorpay-payment', body, {
+            await axios.post(`${import.meta.env.VITE_APP}/api/orders/validate-razorpay-payment`, body, {
               headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             toast.success('Payment Successful! 🎉 Order Placed.');

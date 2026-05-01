@@ -37,13 +37,13 @@ const AdminDashboard = () => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       if (activeTab === 'home') {
-        const res = await axios.get('http://localhost:3001/api/admin/dashboard', config);
+        const res = await axios.get(`${import.meta.env.VITE_APP}/api/admin/dashboard`, config);
         setDashboardData(res.data);
       } else if (activeTab === 'edit' || activeTab === 'add') {
-        const res = await axios.get('http://localhost:3001/api/products');
+        const res = await axios.get(`${import.meta.env.VITE_APP}/api/products`);
         setProducts(res.data);
       } else if (activeTab === 'deliveries') {
-        const res = await axios.get('http://localhost:3001/api/orders', config);
+        const res = await axios.get(`${import.meta.env.VITE_APP}/api/orders`, config);
         setOrders(res.data);
       }
     } catch (err) {
@@ -61,7 +61,7 @@ const AdminDashboard = () => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      await axios.delete(`http://localhost:3001/api/products/${id}`, config);
+      await axios.delete(`${import.meta.env.VITE_APP}/api/products/${id}`, config);
       toast.success('Product deleted successfully');
       fetchData();
     } catch (err) {
@@ -72,7 +72,7 @@ const AdminDashboard = () => {
   const handleUpdateStatus = async (orderId, newStatus) => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      await axios.put(`http://localhost:3001/api/orders/${orderId}`, { status: newStatus }, config);
+      await axios.put(`${import.meta.env.VITE_APP}/api/orders/${orderId}`, { status: newStatus }, config);
       toast.success('Order status updated');
       fetchData();
     } catch (err) {

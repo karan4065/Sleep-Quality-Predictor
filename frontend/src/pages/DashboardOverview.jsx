@@ -5,7 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = `${import.meta.env.VITE_APP}/api`;
 
 const DashboardOverview = () => {
   const { user } = useContext(AuthContext);

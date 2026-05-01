@@ -12,7 +12,7 @@ const Requests = () => {
     const fetchRequests = async () => {
       try {
         const token = localStorage.getItem('adminToken');
-        const res = await axios.get('http://localhost:3001/api/contact', {
+        const res = await axios.get(`${import.meta.env.VITE_APP}/api/contact`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setRequests(res.data);

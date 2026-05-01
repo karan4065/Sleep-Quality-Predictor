@@ -4,7 +4,7 @@ import { Activity, Moon, Monitor, TrendingUp, Trash2, X } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import toast from 'react-hot-toast';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = `${import.meta.env.VITE_APP}/api`;
 
 const Predictor = () => {
   const [formData, setFormData] = useState({ screen_time: '', sleep_time: '', physical_activity: '' });

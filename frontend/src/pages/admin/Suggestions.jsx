@@ -12,7 +12,7 @@ const Suggestions = () => {
     const fetchSuggestions = async () => {
       try {
         const token = localStorage.getItem('adminToken');
-        const res = await axios.get('http://localhost:3001/api/suggestions', {
+        const res = await axios.get(`${import.meta.env.VITE_APP}/api/suggestions`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setSuggestions(res.data);

@@ -16,7 +16,7 @@ const Shop = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('http://localhost:3001/api/products');
+      const res = await axios.get(`${import.meta.env.VITE_APP}/api/products`);
       setProducts(res.data);
     } catch (err) {
       toast.error('Failed to load products');

@@ -8,7 +8,7 @@ export const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const { user } = useContext(AuthContext);
   const [cart, setCart] = useState([]);
-  const API_URL = 'http://localhost:3001/api/cart';
+  const API_URL = `${import.meta.env.VITE_APP}/api/cart`;
 
   useEffect(() => {
     if (user) {

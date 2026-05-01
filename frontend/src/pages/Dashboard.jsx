@@ -5,7 +5,7 @@ import { Line } from 'react-chartjs-2';
 import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = `${import.meta.env.VITE_APP}/api`;
 
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext);

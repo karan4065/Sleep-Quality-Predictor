@@ -36,10 +36,10 @@ const ProductForm = ({ initialData, onSuccess, onCancel }) => {
     
     try {
       if (initialData) {
-        await axios.put(`http://localhost:3001/api/products/${initialData._id}`, formData, config);
+        await axios.put(`${import.meta.env.VITE_APP}/api/products/${initialData._id}`, formData, config);
         toast.success('Product updated successfully!');
       } else {
-        await axios.post('http://localhost:3001/api/products', formData, config);
+        await axios.post(`${import.meta.env.VITE_APP}/api/products`, formData, config);
         toast.success('Product added successfully!');
         setFormData({ name: '', price: '', description: '', image: '', category: 'pillows' });
       }

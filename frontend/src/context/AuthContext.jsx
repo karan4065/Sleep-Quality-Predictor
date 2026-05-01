@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         try {
-          const res = await axios.get('http://localhost:3001/api/auth/me');
+          const res = await axios.get(`${import.meta.env.VITE_APP}/api/auth/me`);
           setUser(res.data);
         } catch (error) {
           console.error('Invalid token');

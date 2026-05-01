@@ -17,7 +17,7 @@ const Orders = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get(`http://localhost:3001/api/orders/my-orders`);
+      const res = await axios.get(`${import.meta.env.VITE_APP}/api/orders/my-orders`);
       setOrders(res.data);
     } catch (err) {
       console.error(err);
@@ -63,7 +63,7 @@ const Orders = () => {
                     Order ID: <span style={{ fontFamily: 'monospace', color: 'var(--text-primary)' }}>{order._id}</span>
                   </span>
                   <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                    Placed on: <span style={{ color: 'var(--text-primary)' }}>{new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                    Placed on: <span style={{ color: 'var(--text-primary)' }}>{new Date(order.createdAt).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                   </span>
                 </div>
                 <span className={`status-badge status-${order.status}`} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
