@@ -15,8 +15,8 @@ const Stat = require('./models/Stat');
 const auth = require('./middleware/auth');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
-const FLASK_API_URL = process.env.FLASK_API_URL || 'http://localhost:5000/predict';
+const PORT = process.env.PORT || 9000;
+const FLASK_API_URL = process.env.FLASK_API_URL || 'http://localhost:9000/predict';
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
 
 app.use(cors());
