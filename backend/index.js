@@ -286,6 +286,12 @@ app.delete('/api/cart/remove/:productId', auth, async (req, res) => {
 app.post('/api/sleep-predict', auth, async (req, res) => {
   try {
     const { screen_time, sleep_time, physical_activity } = req.body;
+    console.log("FLASK_API_URL =", FLASK_API_URL);
+    console.log("Request Body =", {
+      screen_time,
+      sleep_time,
+      physical_activity
+    });
 
     // Call Flask ML API
     const flaskResponse = await axios.post(FLASK_API_URL, {
