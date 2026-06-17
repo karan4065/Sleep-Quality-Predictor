@@ -6,6 +6,7 @@ const axios = require('axios');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const compression = require('compression');
 
 const History = require('./models/History');
 const User = require('./models/User');
@@ -21,6 +22,13 @@ const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
 
 app.use(cors());
 app.use(express.json());
+app.use(compression());
+
+// Health route for Render uptime monitoring
+app.get('/api/health', (req, res) => res.status(200).json({ status: 'ok', uptime: process.uptime() }));
+
+// Simple In-Memory Cache for History
+const historyCache = new Map();
 
 // --- Email Utility ---
 const sendEmail = async (to, subject, html) => {
@@ -48,8 +56,12 @@ const sendEmail = async (to, subject, html) => {
 };
 
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/sleep_predictor')
+// MongoDB Connection with Pooling for better performance
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/sleep_predictor', {
+  maxPoolSize: 10,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+})
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection error:', err));
 
@@ -285,13 +297,17 @@ app.delete('/api/cart/remove/:productId', auth, async (req, res) => {
 // Route to get prediction and save to history
 app.post('/api/sleep-predict', auth, async (req, res) => {
   try {
-    const { screen_time, sleep_time, physical_activity } = req.body;
+    const { 
+      age, gender, occupation, sleep_duration, 
+      physical_activity, stress_level, bmi_category, 
+      heart_rate, daily_steps, blood_pressure 
+    } = req.body;
 
     // Call Flask ML API
     const flaskResponse = await axios.post(FLASK_API_URL, {
-      screen_time,
-      sleep_time,
-      physical_activity
+      age, gender, occupation, sleep_duration, 
+      physical_activity, stress_level, bmi_category, 
+      heart_rate, daily_steps, blood_pressure
     });
 
     const { score, category, suggestions } = flaskResponse.data;
@@ -299,14 +315,17 @@ app.post('/api/sleep-predict', auth, async (req, res) => {
     // Save to MongoDB with user ID
     const newHistory = new History({
       user: req.user.id,
-      screen_time,
-      sleep_time,
-      physical_activity,
+      age, gender, occupation, sleep_duration, 
+      physical_activity, stress_level, bmi_category, 
+      heart_rate, daily_steps, blood_pressure,
       score,
       category,
       suggestions
     });
     await newHistory.save();
+
+    // Invalidate Cache
+    historyCache.delete(req.user.id);
 
     res.json(newHistory);
   } catch (error) {
@@ -318,7 +337,12 @@ app.post('/api/sleep-predict', auth, async (req, res) => {
 // Route to fetch history
 app.get('/api/history', auth, async (req, res) => {
   try {
-    const history = await History.find({ user: req.user.id }).sort({ createdAt: -1 }).limit(10);
+    // Return cached data if available
+    if (historyCache.has(req.user.id)) {
+      return res.json(historyCache.get(req.user.id));
+    }
+    const history = await History.find({ user: req.user.id }).sort({ createdAt: -1 }).limit(10).lean(); // Added lean() for performance
+    historyCache.set(req.user.id, history);
     res.json(history);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch history' });
@@ -334,6 +358,10 @@ app.delete('/api/history/:id', auth, async (req, res) => {
       return res.status(403).json({ error: 'Not authorized to delete this record' });
     }
     await History.findByIdAndDelete(req.params.id);
+    
+    // Invalidate Cache
+    historyCache.delete(req.user.id);
+    
     res.json({ message: 'Record deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete record' });

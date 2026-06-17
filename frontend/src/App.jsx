@@ -1,21 +1,24 @@
-import React, { useContext } from 'react';
+import React, { Suspense, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { Toaster } from 'react-hot-toast';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import DashboardOverview from './pages/DashboardOverview';
-import Predictor from './pages/Predictor';
-import Shop from './pages/Shop';
-import Orders from './pages/Orders';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import AdminDashboard from './pages/admin/Dashboard';
-import Suggestion from './pages/Suggestion';
-import Contact from './pages/Contact';
 import Layout from './components/Layout';
+
+// Lazy load components to reduce initial bundle size and speed up load time
+const Login = React.lazy(() => import('./pages/Login'));
+const Register = React.lazy(() => import('./pages/Register'));
+const DashboardOverview = React.lazy(() => import('./pages/DashboardOverview'));
+const Predictor = React.lazy(() => import('./pages/Predictor'));
+const Shop = React.lazy(() => import('./pages/Shop'));
+const Orders = React.lazy(() => import('./pages/Orders'));
+const Cart = React.lazy(() => import('./pages/Cart'));
+const Checkout = React.lazy(() => import('./pages/Checkout'));
+const AdminDashboard = React.lazy(() => import('./pages/admin/Dashboard'));
+const Suggestion = React.lazy(() => import('./pages/Suggestion'));
+const Contact = React.lazy(() => import('./pages/Contact'));
+
 
 import {
   Chart as ChartJS,
@@ -51,22 +54,24 @@ function App() {
             }
           }} />
           <Router>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/" element={<ProtectedRoute><DashboardOverview /></ProtectedRoute>} />
-              <Route path="/predictor" element={<ProtectedRoute><Predictor /></ProtectedRoute>} />
-              <Route path="/shop" element={<ProtectedRoute><Shop /></ProtectedRoute>} />
-              <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
-              <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-              <Route path="/checkout/:productId" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-              <Route path="/suggestion" element={<ProtectedRoute><Suggestion /></ProtectedRoute>} />
-              <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
-              
-              {/* Admin Routes */}
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/*" element={<Navigate to="/login" />} />
-            </Routes>
+            <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: '#3b82f6' }}>Loading App...</div>}>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/" element={<ProtectedRoute><DashboardOverview /></ProtectedRoute>} />
+                <Route path="/predictor" element={<ProtectedRoute><Predictor /></ProtectedRoute>} />
+                <Route path="/shop" element={<ProtectedRoute><Shop /></ProtectedRoute>} />
+                <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+                <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                <Route path="/checkout/:productId" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                <Route path="/suggestion" element={<ProtectedRoute><Suggestion /></ProtectedRoute>} />
+                <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/*" element={<Navigate to="/login" />} />
+              </Routes>
+            </Suspense>
           </Router>
         </WishlistProvider>
       </CartProvider>
