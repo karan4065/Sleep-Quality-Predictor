@@ -297,17 +297,11 @@ app.delete('/api/cart/remove/:productId', auth, async (req, res) => {
 // Route to get prediction and save to history
 app.post('/api/sleep-predict', auth, async (req, res) => {
   try {
-    const { 
-      age, gender, occupation, sleep_duration, 
-      physical_activity, stress_level, bmi_category, 
-      heart_rate, daily_steps, blood_pressure 
-    } = req.body;
+    const { screen_time, sleep_time, physical_activity } = req.body;
 
     // Call Flask ML API
     const flaskResponse = await axios.post(FLASK_API_URL, {
-      age, gender, occupation, sleep_duration, 
-      physical_activity, stress_level, bmi_category, 
-      heart_rate, daily_steps, blood_pressure
+      screen_time, sleep_time, physical_activity
     });
 
     const { score, category, suggestions } = flaskResponse.data;
@@ -315,9 +309,9 @@ app.post('/api/sleep-predict', auth, async (req, res) => {
     // Save to MongoDB with user ID
     const newHistory = new History({
       user: req.user.id,
-      age, gender, occupation, sleep_duration, 
-      physical_activity, stress_level, bmi_category, 
-      heart_rate, daily_steps, blood_pressure,
+      screen_time,
+      sleep_time,
+      physical_activity,
       score,
       category,
       suggestions
